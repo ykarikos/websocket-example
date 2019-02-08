@@ -1,13 +1,24 @@
 <html>
 <body>
+  <textarea rows="20" cols="60" id="area"></textarea>
 <script>
-  var socket = new WebSocket('ws://localhost:3000/async');
-  socket.onopen = function() {
-    console.log('connected to server');
-    socket.send('Hi Server...');
-    socket.onmessage = function() { console.log('received a message!'); };
-    socket.onclose = function() { console.log('disconnected from server'); };
+var socket = new WebSocket('ws://localhost:3000/async');
+var area = document.getElementById('area');
+area.addEventListener('input', function(e) {
+    socket.send(e.target.value);
+});
+function sendText() {
+  socket.send(area.value);
+}
+
+socket.onopen = function() {
+  console.log('connected to server');
+  socket.onmessage = function(e) {
+     area.value = e.data;
   };
-</script> 
+  socket.onclose = function() { console.log('disconnected from server'); };
+};
+
+</script>
 </body>
 </html>

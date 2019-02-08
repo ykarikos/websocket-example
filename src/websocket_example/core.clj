@@ -5,10 +5,16 @@
             [compojure.route :as route]
             [clojure.java.io :as io]))
 
+(def channels (atom []))
+
+(defn- broadcast [message]
+  (doall (for [c @channels]
+          (enqueue c message))))
+
 (defn async-handler [channel handshake]
   (println "New client is here!")
-  (enqueue channel "hello world")
-  (receive-all channel #(println "Client has sent:" %))
+  (swap! channels conj channel)
+  (receive-all channel broadcast)
   (on-closed channel #(println "Client has disconnected")))
 
 (defroutes handler
