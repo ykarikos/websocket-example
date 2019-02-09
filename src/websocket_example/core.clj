@@ -8,8 +8,9 @@
 (def channels (atom []))
 
 (defn- broadcast [message]
+  (println "Received message" message)
   (doall (for [c @channels]
-          (enqueue c message))))
+             (enqueue c message))))
 
 (defn async-handler [channel handshake]
   (println "New client is here!")
@@ -25,4 +26,5 @@
 (defn -main []
   (start-http-server
    (wrap-ring-handler handler)
-   {:port 3000 :websocket true}))
+   {:port 3000 :websocket true})
+  (println "Server started."))
